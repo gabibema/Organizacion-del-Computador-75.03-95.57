@@ -1,0 +1,27 @@
+# See https://pre-commit.com for more information
+fail_fast: false
+repos:
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.1.1
+    hooks:
+      - id: clang-format
+        args: [-i]
+#      - id: clang-tidy
+#        args: [-checks=clang-diagnostic-return-type,readability-braces-around-statements]
+#      - id: oclint
+#        args: [-enable-clang-static-analyzer, -enable-global-analysis]
+#      - id: uncrustify
+#        args: [--replace, --no-backup, -c, .uncrustify.cfg]
+#      - id: cppcheck
+#        args: [--enable=all]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: check-ast
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-vcs-permalinks
+    - id: check-added-large-files

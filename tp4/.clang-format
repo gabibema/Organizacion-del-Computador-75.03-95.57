@@ -1,0 +1,27 @@
+# According to clang (https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
+# A style similar to the Linux Kernel style:
+BasedOnStyle: LLVM
+# IndentWidth: 8
+# UseTab: Always
+BreakBeforeBraces: Linux
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: false
+
+AllowShortFunctionsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+ColumnLimit: 120
+IndentWidth: 4
+IncludeCategories:
+  - Regex:    '^"[^/]*\.h"'
+    Priority: 1
+  - Regex:    '^".*\.h"'
+    Priority: 2
+  - Regex:    '^<.*\.h>'
+    Priority: 3
+  - Regex:    '^<.*'
+    Priority: 4
+MaxEmptyLinesToKeep: 2
+PointerAlignment: Right
+SortIncludes: true
+SpaceAfterCStyleCast: true
+AlignEscapedNewlines: Left

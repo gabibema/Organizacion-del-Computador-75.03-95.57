@@ -1,0 +1,254 @@
+#######################################################################
+# Test for copying block of size 4;
+#######################################################################
+	.pos 0
+main:	irmovq Stack, %rsp  	# Set up stack pointer
+
+	# Set up arguments for copy function and then invoke it
+	irmovq $4, %rdx		# src and dst have 4 elements
+	irmovq dest, %rsi	# dst array
+	irmovq src, %rdi	# src array
+	call ncopy		 
+	halt			# should halt with num nonzeros in %rax
+StartFun:
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Include your name and ID here.
+#
+# Describe how and why you modified the baseline code.
+#
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+# Loop header
+    iaddq $-8, %rdx         # len = len - 8
+	jle Continue           # si len > 0, continuar el ciclo
+
+########-----Loop Separator-------################################
+
+Loop:
+	mrmovq (%rdi), %rcx	    
+	iaddq $72, %rdi		    
+	iaddq $72, %rsi			
+	mrmovq -64(%rdi), %r8	
+	rmmovq %rcx, -72(%rsi)  
+	andq %rcx, %rcx		    
+	jle LoopJmp1			
+	iaddq $1, %rax		  
+
+LoopJmp1:
+	mrmovq -56(%rdi), %r9   
+	rmmovq %r8, -64(%rsi)	
+	andq %r8, %r8			
+	mrmovq -48(%rdi), %r10  
+	jle LoopJmp2			
+	iaddq $1, %rax			
+
+LoopJmp2:
+	rmmovq %r9, -56(%rsi)   
+	andq %r9, %r9           
+	mrmovq -40(%rdi), %r11  
+	jle LoopJmp3            
+	iaddq $1, %rax          
+
+LoopJmp3:
+	rmmovq %r10, -48(%rsi)  
+	andq %r10, %r10         
+	jle LoopJmp4            
+	iaddq $1, %rax          
+
+LoopJmp4:
+	rmmovq %r11, -40(%rsi)  
+	mrmovq -32(%rdi), %r8   
+	andq %r11, %r11         
+	jle LoopJmp5
+	iaddq $1, %rax          
+
+LoopJmp5:
+	rmmovq %r8, -32(%rsi)  
+	andq %r8, %r8           
+	mrmovq -24(%rdi), %r9   
+	jle LoopJmp6            
+	iaddq $1, %rax          
+
+LoopJmp6:
+	rmmovq %r9, -24(%rsi)   
+	mrmovq -16(%rdi), %r10  
+	andq %r9, %r9           
+	jle LoopJmp7            
+	iaddq $1, %rax          
+
+LoopJmp7:
+	rmmovq %r10, -16(%rsi)  
+	mrmovq -8(%rdi), %r11   
+	andq %r10, %r10         
+	jle LoopJmp8            
+	iaddq $1, %rax          
+
+LoopJmp8:
+	rmmovq %r11, -8(%rsi)   
+	andq %r11, %r11         
+	jle LoopJmp9
+	iaddq $1, %rax          
+
+LoopJmp9:
+	iaddq $-9, %rdx		
+	jg Loop					
+
+######################################################
+
+Continue:
+    iaddq $5, %rdx
+    jl LessThan3
+    jg GreaterThan3
+    jmp RemAdd3
+
+LessThan3:
+    iaddq $2, %rdx
+    je RemAdd1
+    iaddq $-1, %rdx
+    je RemAdd2
+    ret
+
+GreaterThan3:
+    iaddq $-3, %rdx
+    jl FourAndFive
+    jg SevenAndEight
+    jmp RemAdd6
+
+FourAndFive:
+    iaddq $1, %rdx
+    jl RemAdd4
+    jmp RemAdd5
+
+SevenAndEight:
+    iaddq $-2, %rdx
+    jl RemAdd7
+    jmp RemAdd8
+
+###################################################
+
+RemAdd8:
+    mrmovq 56(%rdi), %r11	
+    rmmovq %r11, 56(%rsi)	
+    andq %r11, %r11			
+
+RemAdd7:
+    mrmovq 48(%rdi), %r8	
+    jle RemAdd7Rax          
+    iaddq $1, %rax			
+RemAdd7Rax:
+    rmmovq %r8, 48(%rsi)	
+    andq %r8, %r8			
+
+RemAdd6:
+    mrmovq 40(%rdi), %r9	
+    jle RemAdd6Rax          
+    iaddq $1, %rax			
+RemAdd6Rax:
+    rmmovq %r9, 40(%rsi)	
+    andq %r9, %r9			
+
+RemAdd5:
+    mrmovq 32(%rdi), %r10	
+    jle RemAdd5Rax          
+    iaddq $1, %rax			
+RemAdd5Rax:
+    rmmovq %r10, 32(%rsi)	
+    andq %r10, %r10         
+
+RemAdd4:
+    mrmovq 24(%rdi), %r11   
+    jle RemAdd4Rax          
+    iaddq $1, %rax          
+RemAdd4Rax:
+    rmmovq %r11, 24(%rsi)	
+    andq %r11, %r11         
+
+RemAdd3:
+    mrmovq 16(%rdi), %r8	
+    jle RemAdd3Rax          
+    iaddq $1, %rax          
+RemAdd3Rax:
+    rmmovq %r8, 16(%rsi)	
+    andq %r8, %r8           
+
+RemAdd2:
+    mrmovq 8(%rdi), %r9     
+    jle RemAdd2Rax          
+    iaddq $1, %rax          
+RemAdd2Rax:
+    rmmovq %r9, 8(%rsi)     
+    andq %r9, %r9           
+
+RemAdd1:
+    mrmovq (%rdi), %rcx		
+     jle RemAdd1Rax         
+     iaddq $1, %rax         
+RemAdd1Rax:
+    rmmovq %rcx, (%rsi)     
+    andq %rcx, %rcx			
+    jle Done                
+    iaddq $1, %rax			
+	ret
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */EndFun:
+
+###############################
+# Source and destination blocks 
+###############################
+	.align 8
+src:
+	.quad 1
+	.quad -2
+	.quad -3
+	.quad 4
+	.quad 0xbcdefa # This shouldn't get moved
+
+	.align 16
+Predest:
+	.quad 0xbcdefa
+dest:
+	.quad 0xcdefab
+	.quad 0xcdefab
+	.quad 0xcdefab
+	.quad 0xcdefab
+Postdest:
+	.quad 0xdefabc
+
+.align 8
+# Run time stack
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+	.quad 0
+
+Stack:
